@@ -56,6 +56,11 @@ var coins = {
     unitScale: 8,
     displayScale: 5,
     displayCode: 'mBCH'
+  },
+  DUC: {
+    unitScale: 8,
+    displayScale: 5,
+    displayCode: 'mDUC'
   }
 }
 
@@ -76,7 +81,7 @@ let currentCoins = []
 var MUSEO = ['ca', 'cs', 'da', 'de', 'en', 'es', 'et', 'fi', 'fr', 'hr',
   'hu', 'it', 'lt', 'nb', 'nl', 'pl', 'pt', 'ro', 'sl', 'sv', 'tr']
 
-function connect () {
+function connect() {
   console.log(`ws://${HOST}:${PORT}/`)
   websocket = new WebSocket(`ws://${HOST}:${PORT}/`)
   websocket.onmessage = function (event) {
@@ -86,13 +91,13 @@ function connect () {
   websocket.onerror = err => console.log(err)
 }
 
-function verifyConnection () {
+function verifyConnection() {
   if (websocket.readyState === websocket.CLOSED) {
     connect()
   }
 }
 
-function buttonPressed (button, data) {
+function buttonPressed(button, data) {
   if (!buttonActive) return
   wifiKeyboard.deactivate()
   buttonActive = false
@@ -100,12 +105,12 @@ function buttonPressed (button, data) {
     buttonActive = true
     wifiKeyboard.activate()
   }, 300)
-  var res = {button: button}
+  var res = { button: button }
   if (data || data === null) res.data = data
   if (websocket) websocket.send(JSON.stringify(res))
 }
 
-function processData (data) {
+function processData(data) {
   if (data.localeInfo) setLocaleInfo(data.localeInfo)
   if (data.locale) setLocale(data.locale)
   if (!locale) return
@@ -264,24 +269,24 @@ function processData (data) {
   }
 }
 
-function facephotoPermission () {
+function facephotoPermission() {
   setScreen('facephoto_permission')
 }
 
-function idVerification () {
+function idVerification() {
   setScreen('id_verification')
 }
 
-function smsVerification (threshold) {
+function smsVerification(threshold) {
   console.log('sms threshold to be displayed', threshold)
   setScreen('sms_verification')
 }
 
-function blockedCustomer () {
+function blockedCustomer() {
   return setScreen('blocked_customer')
 }
 
-function chooseCoin (coins, twoWayMode) {
+function chooseCoin(coins, twoWayMode) {
   if (twoWayMode) {
     $('.choose_coin_state').removeClass('choose-coin-cash-in').addClass('choose-coin-two-way')
   } else {
@@ -306,31 +311,31 @@ function chooseCoin (coins, twoWayMode) {
   setState('choose_coin')
 }
 
-function openLanguageDropdown () {
+function openLanguageDropdown() {
   $('#language-dropdown-toggle').addClass('hide')
   $('#languages').removeClass('hide')
   $('#language-overlay').removeClass('hide')
 }
 
-function closeLanguageDropdown () {
+function closeLanguageDropdown() {
   $('#language-dropdown-toggle').removeClass('hide')
   $('#languages').addClass('hide')
   $('#language-overlay').addClass('hide')
 }
 
-function openCoinDropdown () {
+function openCoinDropdown() {
   $('#crypto-dropdown-toggle').addClass('hide')
   $('#crypto-overlay').removeClass('hide')
   $('#cryptos').removeClass('hide')
 }
 
-function closeCoinDropdown () {
+function closeCoinDropdown() {
   $('#crypto-dropdown-toggle').removeClass('hide')
   $('#crypto-overlay').addClass('hide')
   $('#cryptos').addClass('hide')
 }
 
-function setupCoinsButtons () {
+function setupCoinsButtons() {
   $('.crypto-buttons').empty()
   closeCoinDropdown()
 
@@ -384,7 +389,7 @@ function setupCoinsButtons () {
   }
 }
 
-function setCryptoBuy (coin) {
+function setCryptoBuy(coin) {
   const cashIn = $('.cash-in')
   const translatedCoin = locale.translate(coin.display).fetch()
   const buyStr = locale.translate('Buy<br/>%s').fetch(translatedCoin)
@@ -392,7 +397,7 @@ function setCryptoBuy (coin) {
   cashIn.html(buyStr)
 }
 
-function setCryptoSell (coin) {
+function setCryptoSell(coin) {
   const cashOut = $('.cash-out')
   const translatedCoin = locale.translate(coin.display).fetch()
   const sellStr = locale.translate('Sell<br/>%s').fetch(translatedCoin)
@@ -400,7 +405,7 @@ function setCryptoSell (coin) {
   cashOut.html(sellStr)
 }
 
-function switchCoin (coin) {
+function switchCoin(coin) {
   const cashIn = $('.cash-in')
   const cashOut = $('.cash-out')
   const cryptoCode = coin.cryptoCode
@@ -422,7 +427,7 @@ function switchCoin (coin) {
     setTimeout(() => cashOut.removeClass('crypto-switch'), 1000)
   }, 80)
 
-  const selectedIndex = currentCoins.indexOf(currentCoins.find(it => it.cryptoCode === cryptoCode)) 
+  const selectedIndex = currentCoins.indexOf(currentCoins.find(it => it.cryptoCode === cryptoCode))
   if (currentCoins.length > 4 && selectedIndex > 2) {
     currentCoins.splice(2, 0, currentCoins.splice(selectedIndex, 1)[0])
   }
@@ -442,21 +447,21 @@ $(document).ready(function () {
   // Matt's anti-drag hack
   window.onclick =
     window.oncontextmenu =
-      window.onmousedown =
-        window.onmousemove =
-          window.onmouseup =
-            function () { return false }
+    window.onmousedown =
+    window.onmousemove =
+    window.onmouseup =
+    function () { return false }
 
-  BigNumber.config({ROUNDING_MODE: BigNumber.ROUND_HALF_EVEN})
+  BigNumber.config({ ROUNDING_MODE: BigNumber.ROUND_HALF_EVEN })
 
   wifiKeyboard = new Keyboard('wifi-keyboard').init()
 
-  phoneKeypad = new Keypad('phone-keypad', {type: 'phoneNumber', country: 'US'}, function (result) {
+  phoneKeypad = new Keypad('phone-keypad', { type: 'phoneNumber', country: 'US' }, function (result) {
     if (currentState !== 'register_phone') return
     buttonPressed('phoneNumber', result)
   })
 
-  securityKeypad = new Keypad('security-keypad', {type: 'code'}, function (result) {
+  securityKeypad = new Keypad('security-keypad', { type: 'code' }, function (result) {
     if (currentState !== 'security_code') return
     buttonPressed('securityCode', result)
   })
@@ -484,7 +489,7 @@ $(document).ready(function () {
         var displaySsid = ssidEl.text()
         var rawSsid = ssidEl.data('raw-ssid')
         buttonPressed('wifiSelect',
-          {ssid: ssid, rawSsid: rawSsid, displaySsid: displaySsid})
+          { ssid: ssid, rawSsid: rawSsid, displaySsid: displaySsid })
       }
     }
   })
@@ -497,7 +502,7 @@ $(document).ready(function () {
     var pass = $('#wifi-keyboard input.passphrase').data('content')
     var ssid = $('#js-i18n-wifi-for-ssid').data('ssid')
     var rawSsid = $('#js-i18n-wifi-for-ssid').data('raw-ssid')
-    buttonPressed('wifiConnect', {pass: pass, ssid: ssid, rawSsid: rawSsid})
+    buttonPressed('wifiConnect', { pass: pass, ssid: ssid, rawSsid: rawSsid })
   })
 
   var sendCoinsButton = document.getElementById('send-coins')
@@ -697,13 +702,13 @@ $(document).ready(function () {
     if (cashButtonJ.hasClass('clear')) return buttonPressed('clearFiat')
     var denominationIndex = cashButtonJ.attr('data-denomination-index')
     var denominationRec = cassettes[denominationIndex]
-    buttonPressed('fiatButton', {denomination: denominationRec.denomination})
+    buttonPressed('fiatButton', { denomination: denominationRec.denomination })
   })
 
   initDebug()
 })
 
-function targetButton (element) {
+function targetButton(element) {
   var classList = element.classList || []
   var special = classList.contains('button') ||
     classList.contains('circle-button') ||
@@ -713,8 +718,8 @@ function targetButton (element) {
   return targetButton(element.parentNode)
 }
 
-function touchEvent (element, callback) {
-  function handler (e) {
+function touchEvent(element, callback) {
+  function handler(e) {
     var target = targetButton(e.target)
 
     target.classList.add('active')
@@ -738,8 +743,8 @@ function touchEvent (element, callback) {
   element.addEventListener('mouseup', handler)
 }
 
-function touchImmediateEvent (element, callback) {
-  function handler (e) {
+function touchImmediateEvent(element, callback) {
+  function handler(e) {
     callback(e)
     e.stopPropagation()
     e.preventDefault()
@@ -750,7 +755,7 @@ function touchImmediateEvent (element, callback) {
   element.addEventListener('mouseup', handler)
 }
 
-function setupImmediateButton (buttonClass, buttonAction, callback) {
+function setupImmediateButton(buttonClass, buttonAction, callback) {
   var button = document.getElementById(buttonClass)
   touchImmediateEvent(button, function () {
     if (callback) callback()
@@ -758,19 +763,19 @@ function setupImmediateButton (buttonClass, buttonAction, callback) {
   })
 }
 
-function setupButton (buttonClass, buttonAction, actionData) {
+function setupButton(buttonClass, buttonAction, actionData) {
   var button = document.getElementById(buttonClass)
   touchEvent(button, function () {
     buttonPressed(buttonAction, actionData)
   })
 }
 
-function setScreen (newScreen, oldScreen) {
+function setScreen(newScreen, oldScreen) {
   if (newScreen === oldScreen) return
 
   if (newScreen === 'insert_bills') {
     $('.js-processing-bill').html(locale.translate('Lamassu Cryptomat').fetch())
-    $('.bill img').css({'-webkit-transform': 'none', top: 0, left: 0})
+    $('.bill img').css({ '-webkit-transform': 'none', top: 0, left: 0 })
   }
 
   var newView = $('.' + newScreen + '_state')
@@ -780,7 +785,7 @@ function setScreen (newScreen, oldScreen) {
   newView.addClass('viewport-active')
 }
 
-function setState (state, delay) {
+function setState(state, delay) {
   if (state === currentState) return
 
   if (currentState === 'terms_screen') {
@@ -804,9 +809,9 @@ function setState (state, delay) {
   } else setScreen(currentState, previousState)
 }
 
-function revertScreen () { setScreen(currentState) }
+function revertScreen() { setScreen(currentState) }
 
-function setWifiList (recs, requestedPage) {
+function setWifiList(recs, requestedPage) {
   var networks = $('#networks')
   if (!recs) recs = networks.data('recs')
   var page = requestedPage || networks.data('page') || 0
@@ -815,7 +820,7 @@ function setWifiList (recs, requestedPage) {
     offset = 0
     page = 0
   }
-  $('#more-networks').css({'display': 'none'})
+  $('#more-networks').css({ 'display': 'none' })
   networks.empty()
   networks.data('page', page)
   networks.data('recs', recs)
@@ -825,9 +830,9 @@ function setWifiList (recs, requestedPage) {
     var rec = recs[i + offset]
     var bars = Math.floor(rec.strength * 4) + 1
     var html = '<div class="wifi-network-button filled-action-button tl2">' +
-    '<span class="ssid" data-raw-ssid="' + rec.rawSsid + '" data-ssid="' +
+      '<span class="ssid" data-raw-ssid="' + rec.rawSsid + '" data-ssid="' +
       rec.ssid + '">' + rec.displaySsid +
-    '</span>' + '<div class="wifiicon-wrapper"><img src="images/wifiicon/' + bars + '.svg"/></div></div>'
+      '</span>' + '<div class="wifiicon-wrapper"><img src="images/wifiicon/' + bars + '.svg"/></div></div>'
     networks.append(html)
   }
 
@@ -838,7 +843,7 @@ function setWifiList (recs, requestedPage) {
   }
 }
 
-function setUpDirectionElement (element, direction) {
+function setUpDirectionElement(element, direction) {
   if (direction === 'cashOut') {
     element.removeClass('cash-in-color')
     element.addClass('cash-out-color')
@@ -848,7 +853,7 @@ function setUpDirectionElement (element, direction) {
   }
 }
 
-function setOperatorInfo (operator) {
+function setOperatorInfo(operator) {
   if (!operator || !operator.active) {
     $('.contacts, .contacts-compact').addClass('hide')
   } else {
@@ -859,11 +864,11 @@ function setOperatorInfo (operator) {
   }
 }
 
-function setHardLimitHours (hours) {
+function setHardLimitHours(hours) {
   $('#hard-limit-hours').text(locale.translate('Please come back in %s hours').fetch(hours))
 }
 
-function setCryptomatModel (model) {
+function setCryptomatModel(model) {
   cryptomatModel = model
   const versions = ['sintra', 'douro', 'gaia']
   const body = $('body')
@@ -872,7 +877,7 @@ function setCryptomatModel (model) {
   $('body').addClass(model.startsWith('douro') ? 'douro' : model)
 }
 
-function setDirection (direction) {
+function setDirection(direction) {
   let states = [
     $('.scan_photo_state'),
     $('.scan_id_state'),
@@ -918,7 +923,7 @@ function setDirection (direction) {
  * @param {String} data.accept
  * @param {String} data.cancel
  */
-function setTermsScreen (data) {
+function setTermsScreen(data) {
   const $screen = $('.terms_screen_state')
   $screen.find('.js-terms-title').html(data.title)
   startPage(data.text)
@@ -927,11 +932,11 @@ function setTermsScreen (data) {
   setTermsConditionsTimeout()
 }
 
-function clearTermsConditionsTimeout () {
+function clearTermsConditionsTimeout() {
   clearTimeout(termsConditionsTimeout)
 }
 
-function setTermsConditionsTimeout () {
+function setTermsConditionsTimeout() {
   termsConditionsTimeout = setTimeout(function () {
     if (currentState === 'terms_screen') {
       buttonPressed('idle')
@@ -939,13 +944,13 @@ function setTermsConditionsTimeout () {
   }, T_C_TIMEOUT)
 }
 
-function resetTermsConditionsTimeout () {
+function resetTermsConditionsTimeout() {
   clearTermsConditionsTimeout()
   setTermsConditionsTimeout()
 }
 
 // click page up button
-function scrollUp () {
+function scrollUp() {
   resetTermsConditionsTimeout()
   const div = document.getElementById('js-terms-text-div')
   if (currentPage !== 0) {
@@ -957,7 +962,7 @@ function scrollUp () {
 }
 
 // start page
-function startPage (text) {
+function startPage(text) {
   const $screen = $('.terms_screen_state')
   $screen.find('.js-terms-text').html(text)
   currentPage = 0
@@ -977,12 +982,12 @@ function startPage (text) {
   }, 100)
 }
 
-function updatePageCounter () {
+function updatePageCounter() {
   document.getElementById('terms-page-counter').textContent = `${currentPage + 1}/${totalPages}`
 }
 
 // click page up button
-function scrollDown () {
+function scrollDown() {
   resetTermsConditionsTimeout()
   const div = document.getElementById('js-terms-text-div')
   if (!(currentPage * scrollSize + scrollSize > textHeightQuantity && currentPage !== 0)) {
@@ -993,7 +998,7 @@ function scrollDown () {
   }
 }
 
-function updateButtonStyles () {
+function updateButtonStyles() {
   textHeightQuantity = document.getElementById('js-terms-text').offsetHeight
   const buttonDown = document.getElementById('scroll-down')
   const buttonUp = document.getElementById('scroll-up')
@@ -1010,13 +1015,13 @@ function updateButtonStyles () {
   }
 }
 
-function moreNetworks () {
+function moreNetworks() {
   var networks = $('#networks')
   var page = networks.data('page')
   setWifiList(null, page + 1)
 }
 
-function setWifiSsid (data) {
+function setWifiSsid(data) {
   $('#js-i18n-wifi-for-ssid').data('ssid', data.ssid)
   $('#js-i18n-wifi-for-ssid').data('raw-ssid', data.rawSsid)
   t('wifi-for-ssid', locale.translate('for %s')
@@ -1025,22 +1030,22 @@ function setWifiSsid (data) {
     .fetch('<strong>' + data.ssid + '</strong>'))
 }
 
-function setLocaleInfo (data) {
+function setLocaleInfo(data) {
   phoneKeypad.setCountry(data.country)
   setPrimaryLocales(data.primaryLocales)
   setLocale(data.primaryLocale)
 }
 
-function otherLanguageName () {
+function otherLanguageName() {
   const lang = lookupLocaleNames(otherLocale())
   return lang && lang.nativeName
 }
 
-function otherLocale () {
+function otherLocale() {
   return _primaryLocales.find(c => c !== localeCode)
 }
 
-function setLocale (data) {
+function setLocale(data) {
   if (!data || data === localeCode) return
   localeCode = data
   jsLocaleCode = data
@@ -1077,14 +1082,14 @@ function setLocale (data) {
   else $('body').removeClass('museo')
 
   locale = loadI18n(localeCode)
-  try { translatePage() } catch (ex) {}
+  try { translatePage() } catch (ex) { }
 
   $('.js-two-language').html(otherLanguageName())
 
   if (lastRates) setExchangeRate(lastRates)
 }
 
-function setChooseCoinColors () {
+function setChooseCoinColors() {
   var elem = $('#bg-to-show > img')
   let img = `images/background/${isTwoWay ? '2way' : '1way'}-${aspectRatio}${isRTL ? '-rtl' : ''}.svg`
   if (img !== elem.attr('src')) {
@@ -1098,7 +1103,7 @@ function setChooseCoinColors () {
   }
 }
 
-function areArraysEqual (arr1, arr2) {
+function areArraysEqual(arr1, arr2) {
   if (arr1.length !== arr2.length) return false
   for (var i = 0; i < arr1.length; i++) {
     if (arr1[i] !== arr2[i]) return false
@@ -1106,7 +1111,7 @@ function areArraysEqual (arr1, arr2) {
   return true
 }
 
-function lookupLocaleNames (locale) {
+function lookupLocaleNames(locale) {
   if (!locale) return
   var langMap = window.languageMappingList
   var language = locale.split('-')[0]
@@ -1114,7 +1119,7 @@ function lookupLocaleNames (locale) {
   return localeNames || langMap[locale]
 }
 
-function setPrimaryLocales (primaryLocales) {
+function setPrimaryLocales(primaryLocales) {
   if (areArraysEqual(primaryLocales, _primaryLocales)) return
   _primaryLocales = primaryLocales
 
@@ -1143,12 +1148,12 @@ function setPrimaryLocales (primaryLocales) {
   $('.js-two-language').toggleClass('hide', sortedPrimaryLocales.length > 2)
 }
 
-function setFiatCode (data) {
+function setFiatCode(data) {
   fiatCode = data
   $('.js-currency').text(fiatCode)
 }
 
-function setFixedFee (_fee) {
+function setFixedFee(_fee) {
   const fee = parseFloat(_fee)
 
   if (fee > 0) {
@@ -1159,7 +1164,7 @@ function setFixedFee (_fee) {
   }
 }
 
-function setCredit (fiat, crypto, lastBill, cryptoCode) {
+function setCredit(fiat, crypto, lastBill, cryptoCode) {
   var coin = coins[cryptoCode]
 
   var scale = new BigNumber(10).pow(coin.displayScale)
@@ -1179,7 +1184,7 @@ function setCredit (fiat, crypto, lastBill, cryptoCode) {
   $('.js-send-crypto-enable').show()
 }
 
-function setupCassettes (_cassettes) {
+function setupCassettes(_cassettes) {
   cassettes = _cassettes
   for (var i = 0; i < cassettes.length; i++) {
     var cassette = cassettes[i]
@@ -1192,12 +1197,13 @@ function setupCassettes (_cassettes) {
   }
 }
 
-function updateCrypto (selector, cryptoAmount, cryptoDisplayCode) {
+function updateCrypto(selector, cryptoAmount, cryptoDisplayCode) {
+  console.log(selector, cryptoAmount, cryptoDisplayCode, 'selector, cryptoAmount, cryptoDisplayCode')
   $(selector).find('.crypto-amount').html(formatCrypto(cryptoAmount))
   $(selector).find('.crypto-units').html(cryptoDisplayCode)
 }
 
-function lookupDecimalChar (localeCode) {
+function lookupDecimalChar(localeCode) {
   var num = 1.1
   var localized = num.toLocaleString(jsLocaleCode, {
     useGrouping: true,
@@ -1208,7 +1214,7 @@ function lookupDecimalChar (localeCode) {
   return localized[1]
 }
 
-function splitNumber (localize, localeCode) {
+function splitNumber(localize, localeCode) {
   var decimalChar = lookupDecimalChar(localeCode)
   var split = localize.split(decimalChar)
 
@@ -1222,7 +1228,7 @@ function splitNumber (localize, localeCode) {
   ].join('')
 }
 
-function formatNumber (num) {
+function formatNumber(num) {
   var localized = num.toLocaleString(jsLocaleCode, {
     useGrouping: true,
     maximumFractionDigits: 3,
@@ -1232,11 +1238,11 @@ function formatNumber (num) {
   return splitNumber(localized, jsLocaleCode)
 }
 
-function formatCrypto (amount) {
+function formatCrypto(amount) {
   return formatNumber(amount)
 }
 
-function formatFiat (amount, fractionDigits) {
+function formatFiat(amount, fractionDigits) {
   if (!fractionDigits) fractionDigits = 0
 
   const localized = amount.toLocaleString(jsLocaleCode, {
@@ -1247,7 +1253,7 @@ function formatFiat (amount, fractionDigits) {
   return splitNumber(localized, jsLocaleCode) + ' ' + fiatCode
 }
 
-function setExchangeRate (_rates) {
+function setExchangeRate(_rates) {
   lastRates = _rates
   var cryptoCode = _rates.cryptoCode
   var rates = _rates.rates
@@ -1270,7 +1276,7 @@ function setExchangeRate (_rates) {
   $('.js-crypto-display-units').text(displayCode)
 }
 
-function qrize (text, target, color, lightning) {
+function qrize(text, target, color, lightning) {
   const image = document.getElementById('bolt-img')
   // Hack for surf browser
   const size = document.body.clientHeight * 0.36
@@ -1298,7 +1304,7 @@ function qrize (text, target, color, lightning) {
   target.empty().append(el)
 }
 
-function setTx (tx) {
+function setTx(tx) {
   const txId = tx.id
   const isPaperWallet = tx.isPaperWallet
   const hasBills = tx.bills && tx.bills.length > 0
@@ -1321,33 +1327,33 @@ function setTx (tx) {
   }, 1000)
 }
 
-function formatAddressNoBreakLines (address) {
+function formatAddressNoBreakLines(address) {
   if (!address) return
   return address.replace(/(.{4})/g, '$1 ')
 }
 
-function formatAddress (address) {
+function formatAddress(address) {
   let toBr = formatAddressNoBreakLines(address)
   if (!toBr) return
 
   return toBr.replace(/((.{4} ){5})/g, '$1<br/> ')
 }
 
-function setBuyerAddress (address) {
+function setBuyerAddress(address) {
   $('.crypto-address-no-br').html(formatAddressNoBreakLines(address))
   $('.crypto-address').html(formatAddress(address))
 }
 
-function setAccepting (currentAccepting) {
+function setAccepting(currentAccepting) {
   accepting = currentAccepting
   if (accepting) {
-    $('.bill img').transition({x: 0, y: -303}, 1000, 'ease-in')
+    $('.bill img').transition({ x: 0, y: -303 }, 1000, 'ease-in')
   } else {
-    $('.bill img').transition({x: 0, y: 0}, 1000, 'ease-out')
+    $('.bill img').transition({ x: 0, y: 0 }, 1000, 'ease-out')
   }
 }
 
-function highBill (highestBill, reason) {
+function highBill(highestBill, reason) {
   var reasonText = reason === 'transactionLimit'
     ? locale.translate('Transaction limit reached.').fetch()
     : locale.translate("We're a little low on crypto.").fetch()
@@ -1359,20 +1365,20 @@ function highBill (highestBill, reason) {
   window.setTimeout(revertScreen, 3000)
 }
 
-function minimumTx (lowestBill) {
+function minimumTx(lowestBill) {
   t('lowest-bill', locale.translate('Minimum first bill is %s.')
     .fetch(formatFiat(lowestBill)))
   setScreen('minimum_tx')
   window.setTimeout(revertScreen, 3000)
 }
 
-function readingBill (bill) {
+function readingBill(bill) {
   $('.js-processing-bill').html(locale.translate('Processing %s ...').fetch(formatFiat(bill)))
   $('.js-send-crypto-enable').hide()
   $('.js-send-crypto-disable').show()
 }
 
-function sendOnly (reason) {
+function sendOnly(reason) {
   // TODO: sendOnly should be made into its own state on brain.js
   if (currentState === 'send_only') return
 
@@ -1396,16 +1402,16 @@ function sendOnly (reason) {
   setState('send_only')
 }
 
-function setPartialSend (sent, total) {
+function setPartialSend(sent, total) {
   $('#already-sent').text(formatFiat(sent.fiat))
   $('#pending-sent').text(formatFiat(total.fiat - sent.fiat))
 }
 
-function t (id, str) {
+function t(id, str) {
   $('#js-i18n-' + id).html(str)
 }
 
-function translateCoin (cryptoCode) {
+function translateCoin(cryptoCode) {
   $('.js-i18n-scan-your-address').html(locale.translate('Scan your <br/> %s address').fetch(cryptoCode))
   $('.js-i18n-please-scan').html(locale.translate('Please scan the QR code <br/> to send us your %s.').fetch(cryptoCode))
   $('.js-i18n-did-send-coins').html(locale.translate('Have you sent the %s yet?').fetch(cryptoCode))
@@ -1417,7 +1423,7 @@ function translateCoin (cryptoCode) {
   }
 }
 
-function initTranslatePage () {
+function initTranslatePage() {
   $('.js-i18n').each(function () {
     var el = $(this)
     el.data('baseTranslation', el.html().trim())
@@ -1428,7 +1434,7 @@ function initTranslatePage () {
   })
 }
 
-function translatePage () {
+function translatePage() {
   $('.js-i18n').each(function () {
     var el = $(this)
     var base = el.data('baseTranslation')
@@ -1446,18 +1452,18 @@ function translatePage () {
   else $('body').removeClass('i18n-long-send-coins')
 }
 
-function loadI18n (localeCode) {
+function loadI18n(localeCode) {
   var messages = locales[localeCode] || locales['en-US']
 
   return new Jed({
-    'missing_key_callback': function () {},
+    'missing_key_callback': function () { },
     'locale_data': {
       'messages': messages
     }
   })
 }
 
-function reachFiatLimit (rec) {
+function reachFiatLimit(rec) {
   var msg = null
   if (rec.isEmpty) msg = locale.translate(`We're a little low, please cash out`)
   else if (rec.txLimitReached) msg = locale.translate('Transaction limit reached, please cash out')
@@ -1467,12 +1473,12 @@ function reachFiatLimit (rec) {
   else el.hide()
 }
 
-function chooseFiat (data) {
+function chooseFiat(data) {
   fiatCredit(data)
   setState('choose_fiat')
 }
 
-function manageFiatButtons (activeDenominations) {
+function manageFiatButtons(activeDenominations) {
   for (var i = 0; i < cassettes.length; i++) {
     var cassette = cassettes[i]
     var denomination = cassette.denomination
@@ -1483,7 +1489,7 @@ function manageFiatButtons (activeDenominations) {
   }
 }
 
-function displayCrypto (cryptoAtoms, cryptoCode) {
+function displayCrypto(cryptoAtoms, cryptoCode) {
   var coin = coins[cryptoCode]
   var scale = new BigNumber(10).pow(coin.displayScale)
   var cryptoAmount = new BigNumber(cryptoAtoms).div(scale).round(3).toNumber()
@@ -1492,9 +1498,9 @@ function displayCrypto (cryptoAtoms, cryptoCode) {
   return cryptoDisplay
 }
 
-function BN (s) { return new BigNumber(s) }
+function BN(s) { return new BigNumber(s) }
 
-function fiatCredit (data) {
+function fiatCredit(data) {
   var tx = data.tx
   var cryptoCode = tx.cryptoCode
   var activeDenominations = data.activeDenominations
@@ -1526,7 +1532,7 @@ function fiatCredit (data) {
   reachFiatLimit(activeDenominations)
 }
 
-function setDepositAddress (depositInfo) {
+function setDepositAddress(depositInfo) {
   $('.deposit_state .loading').hide()
   $('.deposit_state .send-notice .crypto-address').html(formatAddress(depositInfo.toAddress))
   $('.deposit_state .send-notice').show()
@@ -1534,11 +1540,11 @@ function setDepositAddress (depositInfo) {
   qrize(depositInfo.depositUrl, $('#qr-code-deposit'), CASH_OUT_QR_COLOR)
 }
 
-function setVersion (version) {
+function setVersion(version) {
   $('.version-number').html(`Version: ${version}`)
 }
 
-function deposit (tx) {
+function deposit(tx) {
   var cryptoCode = tx.cryptoCode
   var display = displayCrypto(tx.cryptoAtoms, cryptoCode)
 
@@ -1554,7 +1560,7 @@ function deposit (tx) {
   setState('deposit')
 }
 
-function fiatReceipt (tx) {
+function fiatReceipt(tx) {
   var cryptoCode = tx.cryptoCode
   var display = displayCrypto(tx.cryptoAtoms, cryptoCode)
 
@@ -1565,7 +1571,7 @@ function fiatReceipt (tx) {
   setState('fiat_receipt')
 }
 
-function fiatComplete (tx) {
+function fiatComplete(tx) {
   var cryptoCode = tx.cryptoCode
   var display = displayCrypto(tx.cryptoAtoms, cryptoCode)
 
@@ -1576,12 +1582,12 @@ function fiatComplete (tx) {
   setState('fiat_complete')
 }
 
-function dispenseBatch (data) {
+function dispenseBatch(data) {
   $('.batch').css('visibility', data.of === 1 ? 'hidden' : 'visible')
   $('.batch').text(`${data.current}/${data.of}`)
 }
 
-function initDebug () {
+function initDebug() {
   if (DEBUG_MODE === 'dev') {
     $('body').css('cursor', 'default')
     var style = document.createElement('style')
@@ -1603,9 +1609,9 @@ function initDebug () {
 
     if (!SCREEN) {
       return chooseCoin([
-        {display: 'Bitcoin', cryptoCode: 'BTC'},
-        {display: 'Ethereum', cryptoCode: 'ETH'},
-        {display: 'ZCash', cryptoCode: 'ZEC'}
+        { display: 'Bitcoin', cryptoCode: 'BTC' },
+        { display: 'Ethereum', cryptoCode: 'ETH' },
+        { display: 'ZCash', cryptoCode: 'ZEC' }
       ], true)
     }
 
@@ -1613,11 +1619,11 @@ function initDebug () {
   }
 }
 
-function calculateAspectRatio () {
+function calculateAspectRatio() {
   const width = $('body').width()
   const height = $('body').height()
 
-  function gcd (a, b) {
+  function gcd(a, b) {
     return (b === 0) ? a : gcd(b, a % b)
   }
 
@@ -1638,7 +1644,7 @@ function calculateAspectRatio () {
 
 let background = null
 
-function doTransition (cb) {
+function doTransition(cb) {
   // TODO Disable animations for V1
   let toShow = null
   let toShowOver = null
@@ -1670,7 +1676,7 @@ function doTransition (cb) {
   two.pause()
 }
 
-function setupAnimation (isTwoWay, isAr800) {
+function setupAnimation(isTwoWay, isAr800) {
   var elem = document.getElementById('bg-to-show')
   while (elem.firstChild) {
     elem.removeChild(elem.firstChild)
@@ -1682,7 +1688,7 @@ function setupAnimation (isTwoWay, isAr800) {
   background.scale = 1
 }
 
-function shouldEnableTouch () {
+function shouldEnableTouch() {
   const ua = navigator.userAgent
   if (ua.match(/surf/ig)) return false
 

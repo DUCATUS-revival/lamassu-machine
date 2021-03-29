@@ -4,7 +4,7 @@
     "qrTimeout": 60000,
     "goodbyeTimeout": 2000,
     "invalidAddressTimeout": 10000,
-    "billTimeout": 60000,
+    "billTimeout": 10000,
     "completedTimeout": 60000,
     "periodicLogInterval": 3600000,
     "insufficientFundsTimeout": 30000,

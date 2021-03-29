@@ -56,6 +56,11 @@ var coins = {
     unitScale: 8,
     displayScale: 5,
     displayCode: 'mBCH'
+  },
+  DUC: {
+    unitScale: 8,
+    displayScale: 5,
+    displayCode: 'mDUC'
   }
 };
 
@@ -80,6 +85,9 @@ function connect() {
   websocket = new WebSocket('ws://' + HOST + ':' + PORT + '/');
   websocket.onmessage = function (event) {
     var data = $.parseJSON(event.data);
+    if (data.rates) {
+      debugger;
+    }
     processData(data);
   };
   websocket.onerror = function (err) {
@@ -1155,6 +1163,7 @@ function setupCassettes(_cassettes) {
 }
 
 function updateCrypto(selector, cryptoAmount, cryptoDisplayCode) {
+  console.log(selector, cryptoAmount, cryptoDisplayCode, 'selector, cryptoAmount, cryptoDisplayCode');
   $(selector).find('.crypto-amount').html(formatCrypto(cryptoAmount));
   $(selector).find('.crypto-units').html(cryptoDisplayCode);
 }
