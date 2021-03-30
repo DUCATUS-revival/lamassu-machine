@@ -1263,12 +1263,12 @@ function setExchangeRate(_rates) {
 
   var cryptoToFiat = new BigNumber(rates.cashIn)
 
-  var rateStr = formatFiat(cryptoToFiat.round(2).toNumber(), 2)
+  var rateStr = formatFiat(cryptoToFiat.round(8).toNumber(), 5)
   $('.crypto-rate-cash-in').html(`1 ${cryptoCode} = ${rateStr}`)
 
   if (rates.cashOut) {
     var cashOut = new BigNumber(rates.cashOut)
-    var cashOutCryptoToFiat = cashOut && formatFiat(cashOut.round(2).toNumber(), 2)
+    var cashOutCryptoToFiat = cashOut && formatFiat(cashOut.round(8).toNumber(), 5)
 
     $('.crypto-rate-cash-out').html(`1 ${cryptoCode} = ${cashOutCryptoToFiat}`)
   }
