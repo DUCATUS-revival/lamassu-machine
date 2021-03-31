@@ -77,3 +77,6 @@ stress-test/config.json
 result.jpg
 
 build-scripts/update.tar
+
+# file descriptor which will identify initial update of machine
+.atm-forked
